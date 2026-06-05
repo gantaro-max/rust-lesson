@@ -1,0 +1,12 @@
+services:    
+  rust_lesson:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: rust_lesson
+    volumes:
+      - .:/lesson
+      - /lesson/target
+    ports:
+      - "8001:8001"
+    

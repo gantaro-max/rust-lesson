@@ -1,0 +1,30 @@
+{
+  "name": "RustLesson",
+  "dockerComposeFile": "compose.yaml",
+  "service": "rust_lesson",
+  "workspaceFolder": "/lesson",
+  "overrideCommand": true,
+  "postCreateCommand": "sudo chown -R vscode:vscode /lesson/target",
+  "containerEnv": {
+    "LANG": "C.UTF-8"
+  },
+  "remoteEnv": {
+    "LANG": "C.UTF-8"
+  },
+  "remoteUser": "vscode",
+  "updateRemoteUserUID": true,
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "rust-lang.rust-analyzer",
+        "tamasfe.even-better-toml",
+        "anthropic.claude-code",
+        "openai.chatgpt",
+        "ms-azuretools.vscode-docker"                
+      ],
+      "settings": {
+        "rust-analyzer.check.command": "clippy"
+      }
+    }
+  }
+}
