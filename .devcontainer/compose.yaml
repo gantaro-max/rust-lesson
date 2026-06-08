@@ -5,7 +5,7 @@ services:
       dockerfile: Dockerfile
     container_name: rust_lesson
     volumes:
-      - .:/lesson
+      - ..:/lesson
       - /lesson/target
     ports:
       - "8001:8001"

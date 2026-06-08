@@ -3,6 +3,8 @@ mod library;
 mod printable;
 use crate::book::{Book, Genre};
 use crate::library::Library;
+use crate::printable::Printable;
+use crate::printable::{print_item, print_item_other};
 fn main() {
     let book1 = Book::new("まい日記", "山本山", 12, Genre::Novel);
     let book2 = Book::new("ゆあ日記", "川上川", 21, Genre::Comic(12));
@@ -56,4 +58,14 @@ fn main() {
         Ok(book) => println!("{}", book.summary()),
         Err(msg) => println!("{}", msg),
     }
+
+    let book6 = Book::new(
+        "がい日記",
+        "岩中岩",
+        10,
+        Genre::Technical("機械".to_string()),
+    );
+    println!("{}", &book6.full_info());
+    print_item(&book6);
+    print_item_other(&book6);
 }

@@ -1,5 +1,4 @@
 use crate::printable::Printable;
-use std::fmt;
 pub enum Genre {
     Novel,
     Technical(String),
@@ -40,7 +39,14 @@ impl Book {
 }
 
 impl Printable for Book {
-    fn print_info(&self) {
-        println!("{}", self.summary());
+    fn category(&self) -> String {
+        match &self.genre {
+            Genre::Novel => "[小説]".to_string(),
+            Genre::Technical(tech) => format!("[技術書: {}]", tech),
+            Genre::Comic(vol) => format!("[漫画: 全{}巻]", vol),
+        }
+    }
+    fn display(&self) -> String {
+        format!("{}/{} ({}ページ)", self.title, self.author, self.pages)
     }
 }
