@@ -1,44 +1,39 @@
-use crate::book::{Book, Genre};
+use crate::{book::Book, printable::Printable};
 use std::collections::HashMap;
 
-pub struct Library {
-    books: Vec<Book>,
+pub struct Library<T: Printable> {
+    books: Vec<T>,
 }
-impl Library {
+impl<T: Printable> Library<T> {
     pub fn new() -> Self {
         Self { books: vec![] }
     }
-    pub fn add(&mut self, book: Book) {
-        self.books.push(book);
+    pub fn add(&mut self, item: T) {
+        self.books.push(item);
     }
     pub fn list_all(&self) {
         self.books
             .iter()
-            .for_each(|book| println!("{}", book.summary()));
+            .for_each(|item| println!("{}", item.full_info()));
     }
     pub fn count_by_genre(&self) -> HashMap<String, u32> {
         let mut map: HashMap<String, u32> = HashMap::new();
-        for book in &self.books {
-            let key = match book.genre {
-                Genre::Novel => "小説".to_string(),
-                Genre::Technical(_) => "技術書".to_string(),
-                Genre::Comic(_) => "漫画".to_string(),
-            };
+        for item in &self.books {
+            let key = item.category_select();
             *map.entry(key).or_insert(0) += 1;
         }
         map
     }
     pub fn count_by_genre_iter(&self) -> HashMap<String, u32> {
-        self.books.iter().fold(HashMap::new(), |mut map, book| {
-            let key = match book.genre {
-                Genre::Novel => "小説".to_string(),
-                Genre::Technical(_) => "技術書".to_string(),
-                Genre::Comic(_) => "漫画".to_string(),
-            };
+        self.books.iter().fold(HashMap::new(), |mut map, item| {
+            let key = item.category_select();
             *map.entry(key).or_insert(0) += 1;
             map
         })
     }
+}
+
+impl Library<Book> {
     pub fn find_by_title(&self, title: &str) -> Option<&Book> {
         self.books.iter().find(|book| book.title == title)
     }

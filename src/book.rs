@@ -46,6 +46,15 @@ impl Printable for Book {
             Genre::Comic(vol) => format!("[漫画: 全{}巻]", vol),
         }
     }
+
+    fn category_select(&self) -> String {
+        match &self.genre {
+            Genre::Novel => "[小説]".to_string(),
+            Genre::Technical(_) => "[技術書]".to_string(),
+            Genre::Comic(_) => "[漫画]".to_string(),
+        }
+    }
+
     fn display(&self) -> String {
         format!("{}/{} ({}ページ)", self.title, self.author, self.pages)
     }

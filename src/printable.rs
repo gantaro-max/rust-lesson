@@ -1,6 +1,7 @@
 pub trait Printable {
     fn category(&self) -> String;
     fn display(&self) -> String;
+    fn category_select(&self) -> String;
 
     fn full_info(&self) -> String {
         format!("{} {}", self.category(), self.display())
