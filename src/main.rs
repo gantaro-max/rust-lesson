@@ -1,5 +1,6 @@
 mod book;
 mod library;
+mod list;
 mod printable;
 use crate::book::{Book, Genre};
 use crate::library::Library;
