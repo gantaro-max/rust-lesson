@@ -1,9 +1,13 @@
 mod book;
+mod counter;
 mod library;
 mod list;
+mod logger;
 mod printable;
+mod shared;
 use crate::book::{Book, Genre};
 use crate::library::Library;
+use crate::list::List;
 use crate::printable::Printable;
 use crate::printable::{print_item, print_item_other};
 fn main() {
@@ -69,4 +73,14 @@ fn main() {
     println!("{}", &book6.full_info());
     print_item(&book6);
     print_item_other(&book6);
+
+    let list = List::Cons(
+        3,
+        Box::new(List::Cons(4, Box::new(List::Cons(5, Box::new(List::Nil))))),
+    );
+    println!("合計:{}", list.sum());
+
+    shared::run();
+
+    logger::run();
 }
