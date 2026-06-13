@@ -83,4 +83,6 @@ fn main() {
     shared::run();
 
     logger::run();
+
+    counter::run();
 }
