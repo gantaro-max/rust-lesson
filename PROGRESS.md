@@ -109,29 +109,29 @@
 | `Box<T>` | ✅ 講義・設問・解説 完了（`src/list.rs`） |
 | `Rc<T>` | ✅ 講義・設問・解説 完了（`src/shared.rs`） |
 | `Rc<RefCell<T>>` | ✅ 講義・設問・解説 完了（`src/logger.rs`） |
-| `Arc<T>` + `Mutex<T>` | ⏳ 講義済み・設問回答中 |
-| スレッド・非同期（`async/await`） | 未着手 |
+| `Arc<T>` + `Mutex<T>` | ✅ 講義・設問・解説 完了（`src/counter.rs`） |
+| `async/await`（Tokio） | ⏳ 講義済み・設問回答中 |
 | マクロ | 未着手 |
 
-**次回：`Arc<Mutex<T>>` 設問の提出 → 解説 → 次トピックへ**
+**次回：`async/await` 設問の提出 → 解説 → マクロへ**
 
 ---
 
-### Step 6 設問（未提出）：マルチスレッドカウンター
+### Step 6 設問（未提出）：料理シミュレーター（async/await）
 
-`src/counter.rs` を新規作成し、以下を実装する：
+`src/async_task.rs` を新規作成し、以下を実装する：
 
-1. `Arc<Mutex<i32>>` でカウンターを作る（初期値 `0`）
-2. `thread::spawn` で5つのスレッドを起動する
-3. 各スレッドでカウンターを `+1` する
-4. 全スレッドの終了を待つ（`join`）
-5. 最終値を `println!` で出力する（期待値：`5`）
+1. `async fn boil_water() -> &'static str` → 2秒待って "お湯が沸いた" を返す
+2. `async fn chop_vegetables() -> &'static str` → 1秒待って "野菜が切れた" を返す
+3. `async fn prepare_sauce() -> &'static str` → 3秒待って "ソースができた" を返す
+4. `pub async fn run()` → 3つを `tokio::join!` で並列実行し、結果と経過時間を表示
 
-**ヒント：**
-- `for _ in 0..5` でループ
-- `Arc::clone` はループの**外**ではなく、ループの**中**（`spawn` の直前）で呼ぶ
-- `handle` を `Vec` に集めてから、別の `for` ループで全部 `join` する
-- `main.rs` に `mod counter;` と `counter::run();` を追加する
+**待ち時間：** `tokio::time::sleep(tokio::time::Duration::from_secs(N)).await;`
+**時刻計測：** `let start = std::time::Instant::now();` / `start.elapsed()`
+**Cargo.toml に追加：** `tokio = { version = "1", features = ["full"] }`
+**main.rs の変更：** `#[tokio::main]` を付けて `async fn main()` にし、`async_task::run().await;` を呼ぶ
+
+**期待出力：** 経過時間が「約3秒台」（直列なら6秒かかるところを並列で短縮）
 
 ---
 
@@ -154,3 +154,22 @@
 - `.lock().unwrap()` でロック取得 → `MutexGuard` がスコープ終了で自動解放
 - `thread::spawn(move || { ... })` の `move` でクロージャに所有権を移す
 - `handle.join().unwrap()` でスレッドの終了を待つ
+
+### Step 6 講義メモ：async/await
+
+**なぜ非同期か：**
+- スレッド → OS レベルの並列（CPU バウンド向き）
+- async/await → IO 待ち中に別タスクへ制御を渡す（IO バウンド向き）
+
+**`async fn` は `Future` を返す：**
+- 呼び出しただけでは実行されない。ランタイムが `.await` で駆動する
+- Rust 標準ライブラリにランタイムは**ない** → `tokio` クレートを使う
+
+**基本構文：**
+- `#[tokio::main]` → `async fn main()` をランタイムで動かすマクロ
+- `tokio::join!(a(), b())` → 複数 Future を並列実行し全部完了を待つ
+- `tokio::time::sleep(...).await` → 非同期の待機（スレッドをブロックしない）
+
+**直列 vs 並列：**
+- `.await` を逐次書く → 直列（合計時間 = 各タスクの和）
+- `tokio::join!` → 並列（合計時間 = 最長タスクのみ）
