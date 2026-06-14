@@ -1,3 +1,4 @@
+mod async_task;
 mod book;
 mod counter;
 mod library;
@@ -10,7 +11,9 @@ use crate::library::Library;
 use crate::list::List;
 use crate::printable::Printable;
 use crate::printable::{print_item, print_item_other};
-fn main() {
+
+#[tokio::main]
+async fn main() {
     let book1 = Book::new("まい日記", "山本山", 12, Genre::Novel);
     let book2 = Book::new("ゆあ日記", "川上川", 21, Genre::Comic(12));
     let book3 = Book::new(
