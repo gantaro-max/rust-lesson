@@ -1,26 +1,26 @@
-use tokio::{self, time};
+use tokio::{join, time};
 
 async fn boil_water() -> &'static str {
-    tokio::time::sleep(tokio::time::Duration::from_secs(2)).await;
+    time::sleep(time::Duration::from_secs(2)).await;
     "お湯が沸いた"
 }
 
 async fn chop_vegetables() -> &'static str {
-    tokio::time::sleep(tokio::time::Duration::from_secs(1)).await;
+    time::sleep(time::Duration::from_secs(1)).await;
     "野菜が切れた"
 }
 
 async fn prepare_sauce() -> &'static str {
-    tokio::time::sleep(tokio::time::Duration::from_secs(3)).await;
+    time::sleep(time::Duration::from_secs(3)).await;
     "ソースができた"
 }
 
 pub async fn run() {
     let start = std::time::Instant::now();
-    let (boiled, choped, prepared) = tokio::join!(boil_water(), chop_vegetables(), prepare_sauce());
+    let (boiled, chopped, prepared) = join!(boil_water(), chop_vegetables(), prepare_sauce());
     println!("{}", boiled);
-    println!("{}", choped);
+    println!("{}", chopped);
     println!("{}", prepared);
 
-    println!("経過時間: {:?}", start);
+    println!("経過時間: {:?}", start.elapsed());
 }

@@ -4,8 +4,10 @@ mod counter;
 mod library;
 mod list;
 mod logger;
+mod macros;
 mod printable;
 mod shared;
+
 use crate::book::{Book, Genre};
 use crate::library::Library;
 use crate::list::List;
@@ -88,4 +90,13 @@ async fn main() {
     logger::run();
 
     counter::run();
+
+    async_task::run().await;
+
+    let map = hashmap! {
+        "Alice" => 100,
+        "Bob"   => 85,
+        "Carol" => 92
+    };
+    println!("{:?}", map);
 }
