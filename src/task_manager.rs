@@ -1,0 +1,30 @@
+use crate::task::Task;
+
+pub struct TaskManager {
+    tasks: Vec<Task>,
+    next_id: u32,
+}
+
+impl TaskManager {
+    pub fn new() -> Self {
+        Self {
+            tasks: vec![],
+            next_id: 1,
+        }
+    }
+
+    pub fn add(&mut self, title: String) {
+        let new_task = Task::new(self.next_id, title);
+        println!("追加しました: {}", new_task.title());
+        self.tasks.push(new_task);
+        self.next_id += 1;
+    }
+
+    pub fn list(&self) {
+        if self.tasks.is_empty() {
+            println!("タスクはありません");
+        } else {
+            self.tasks.iter().for_each(|task| task.display());
+        }
+    }
+}

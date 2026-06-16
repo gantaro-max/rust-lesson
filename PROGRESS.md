@@ -102,7 +102,7 @@
 
 ## 次回セッションの開始点
 
-**Step 6: スマートポインタ・非同期・マクロ・最適化**（進行中）
+**Step 6: スマートポインタ・非同期・マクロ・最適化**（完了）
 
 | トピック | 状態 |
 |----------|------|
@@ -114,6 +114,108 @@
 | マクロ（`macro_rules!`） | ✅ 講義・設問・解説 完了（`src/macros.rs`） |
 
 **Step 6 全トピック完了**
+
+---
+
+## 総合ミニプロジェクト：CLIタスク管理ツール
+
+**開始日：** 2026-06-16
+**ファイル構成：** `src/task.rs` / `src/task_manager.rs` / `src/main.rs`
+
+### フェーズ一覧
+
+| フェーズ | 内容 | 状態 |
+|----------|------|------|
+| Phase 1 | データ構造設計（`Task` struct / `Status` enum） | ✅ 完了 |
+| Phase 2 | タスク管理ロジック（`TaskManager` / `add` / `list`） | ✅ 完了 |
+| Phase 3 | ファイル保存・読み込み（`save` / `load` / `Result`） | 🔄 進行中 |
+| Phase 4 | CLIコマンド解析（`std::env::args` / `match`） | ⬜ 未着手 |
+| Phase 5 | テスト（`#[test]`） | ⬜ 未着手 |
+
+### Phase 1 習得事項
+- `u32` を ID に使う意味（符号なし整数で意味を型で表現）
+- フィールドを非公開にして getter メソッドでカプセル化
+- `title()` が `&str` を返す理由（clone 不要・借用で十分）
+
+### Phase 2 習得事項
+- 不要な `.clone()` を排除（`println!` が借用するだけ、という気づき）
+- タスクを変数に一時保持してから push する設計（処理順序の意味を意識）
+- `iter().for_each()` による簡潔なイテレーション
+
+---
+
+### Phase 3 設問（未提出）
+
+`task_manager.rs` に以下の2メソッドを追加する。
+
+**保存フォーマット（CSV風テキスト）：**
+```
+1,牛乳を買う,todo
+2,洗濯をする,done
+3,掃除機をかける,todo
+```
+
+**1. `save(&self, path: &str) -> Result<(), String>`**
+- `tasks` の内容を上記フォーマットで1行ずつファイルに書き出す
+- 各行：`{id},{title},{status}`（status は `todo` / `done` の文字列）
+- `std::fs::write` でファイルに書き込む
+- エラー時は `.map_err(|e| e.to_string())` で `Err(String)` に変換して返す
+
+**2. `load(&mut self, path: &str) -> Result<(), String>`**
+- `std::path::Path::new(path).exists()` でファイル存在確認（なければ即 `Ok(())` を返す）
+- `std::fs::read_to_string` でファイルを読む
+- 1行ずつ `,` で分割して `Task` を復元する
+- status 文字列 → `Status` の変換は `match` を使う
+- `next_id` はロードしたタスクの最大ID + 1 にする
+- `use crate::task::Status` を追加でインポートする必要あり
+
+---
+
+### Phase 4 設問（未着手）
+
+`main.rs` を書き換えて、コマンドライン引数でタスク管理ツールを操作できるようにする。
+
+**操作コマンド：**
+```bash
+cargo run -- add "牛乳を買う"   # タスク追加
+cargo run -- list               # 一覧表示
+cargo run -- done 1             # ID=1 を完了にする
+cargo run -- delete 1           # ID=1 を削除する
+```
+
+**実装ポイント：**
+- `std::env::args()` でコマンドライン引数を取得
+- `match` でサブコマンド（`add` / `list` / `done` / `delete`）を振り分け
+- `TaskManager` を生成 → `load` → 操作 → `save` の流れ
+- 保存ファイルは `tasks.csv` などの固定パスでよい
+- `done` コマンド用に `TaskManager::complete(id: u32)` メソッドも追加が必要
+- `delete` コマンド用に `TaskManager::delete(id: u32)` メソッドも追加が必要
+
+---
+
+### Phase 5 設問（未着手）
+
+`task_manager.rs` または `task.rs` に `#[cfg(test)]` ブロックを追加してユニットテストを書く。
+
+**テスト対象（最低限）：**
+1. `add` → `list` でタスクが増えることを確認
+2. `complete` でステータスが `Done` に変わることを確認
+3. `delete` でタスクが消えることを確認
+4. `save` → `load` でデータが往復して復元されることを確認（ファイルI/Oの統合テスト）
+
+---
+
+### Phase 5 以降の発展トピック（参考）
+
+ミニプロジェクト完了後に興味があれば取り組める発展テーマ：
+
+| テーマ | 内容 | 難易度 |
+|--------|------|--------|
+| JSON対応 | `serde` / `serde_json` クレートでJSONシリアライズ | ★★☆ |
+| エラー型の強化 | `thiserror` クレートでカスタムエラー型を定義 | ★★☆ |
+| Web API化 | `axum` でREST APIサーバーに発展 | ★★★ |
+| 非同期ファイルI/O | `tokio::fs` で `async fn save/load` に書き換え | ★★☆ |
+| 手続きマクロ | `derive` マクロを自作する | ★★★ |
 
 ---
 

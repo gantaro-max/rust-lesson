@@ -7,6 +7,8 @@ mod logger;
 mod macros;
 mod printable;
 mod shared;
+mod task;
+mod task_manager;
 
 use crate::book::{Book, Genre};
 use crate::library::Library;
