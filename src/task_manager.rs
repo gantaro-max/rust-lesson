@@ -1,4 +1,5 @@
 use crate::task::Task;
+use std::{error::Error, fs};
 
 pub struct TaskManager {
     tasks: Vec<Task>,
@@ -26,5 +27,11 @@ impl TaskManager {
         } else {
             self.tasks.iter().for_each(|task| task.display());
         }
+    }
+
+    pub fn save(&self, path: &str) -> Result<(), Box<dyn Error>> {
+        let tasks_json = serde_json::to_string_pretty(&self.tasks)?;
+        fs::write(path, tasks_json)?;
+        Ok(())
     }
 }

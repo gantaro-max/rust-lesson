@@ -1,8 +1,13 @@
+use serde::{self, Deserialize, Serialize};
+
+#[derive(Debug, Serialize, Deserialize)]
 pub enum Status {
+    #[serde(rename = "todo")]
     ToDo,
+    #[serde(rename = "done")]
     Done,
 }
-
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Task {
     id: u32,
     title: String,
