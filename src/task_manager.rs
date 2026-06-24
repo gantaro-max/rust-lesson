@@ -34,4 +34,12 @@ impl TaskManager {
         fs::write(path, tasks_json)?;
         Ok(())
     }
+
+    pub fn load(&mut self,path:&str)->Result<(),Box<dyn Error>>{
+        let json = fs::read_to_string(path)?;
+        let tasks:Vec<Task> = serde_json::from_str(&json)?;
+        self.next_id=tasks.len() as u32+1;
+        self.tasks=tasks;
+        Ok(())
+    }
 }
