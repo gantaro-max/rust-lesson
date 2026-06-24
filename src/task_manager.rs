@@ -36,10 +36,15 @@ impl TaskManager {
     }
 
     pub fn load(&mut self,path:&str)->Result<(),Box<dyn Error>>{
+        if !std::path::Path::new(path).exists(){            
+            return Ok(());
+        }       
         let json = fs::read_to_string(path)?;
         let tasks:Vec<Task> = serde_json::from_str(&json)?;
-        self.next_id=tasks.len() as u32+1;
-        self.tasks=tasks;
+        if let Some(last_task) = tasks.last(){
+            self.next_id=last_task.id()+1;
+        };
+        self.tasks = tasks;
         Ok(())
     }
 }
