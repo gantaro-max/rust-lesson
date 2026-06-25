@@ -14,7 +14,7 @@ impl TaskManager {
         }
     }
 
-    pub fn add(&mut self, title: String) {
+    pub fn add(&mut self, title: &str) {
         let new_task = Task::new(self.next_id, title);
         println!("追加しました: {}", new_task.title());
         self.tasks.push(new_task);
@@ -23,10 +23,44 @@ impl TaskManager {
 
     pub fn list(&self) {
         if self.tasks.is_empty() {
-            println!("タスクはありません");
+            println!("タスクは0です");
         } else {
             self.tasks.iter().for_each(|task| task.display());
         }
+    }
+
+    pub fn complete(&mut self,id:u32){
+        if self.tasks.is_empty() {
+            println!("タスクは0です");
+            return;
+        }
+        
+        if let Some(target) = self.tasks.iter_mut().find(|task|task.id()==id){
+            target.done();
+            println!("id: {} {} タスクを完了しました",target.id(),target.title());
+        }
+        else{
+            println!("該当タスクはありません");
+        }
+    }
+
+    pub fn delete(&mut self,id:u32){
+        if self.tasks.is_empty() {
+            println!("タスクは0です");
+            return;
+        }
+        if let Some(target) = self.tasks.iter_mut().find(|task|task.id()==id){
+            let target_id= target.id();
+            let target_title= target.title().to_string();
+            let new_tasks = self.tasks.iter().filter(|task| task.id()!=target_id).cloned().collect();
+            self.tasks=new_tasks;
+            println!("id: {} {} タスクを削除しました",target_id,target_title);
+            
+        }
+        else{
+            println!("該当タスクはありません");
+        }
+
     }
 
     pub fn save(&self, path: &str) -> Result<(), Box<dyn Error>> {
