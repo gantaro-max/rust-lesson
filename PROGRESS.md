@@ -91,6 +91,11 @@
 - 設計判断の基準「トレイトの保証だけで動くか否か」を自力で理解
 - 不要インポートの警告を自分で気づいて修正
 
+### 2026-06-25
+- ミニプロジェクト Phase 3（save/load）・Phase 4（CLIコマンド解析）を実装（git: 「実装中」「load修正中」「load再修正」「ｃLIタスク実装」）
+- Phase 3 は仕様のCSV保存から自主判断でJSON保存（`serde`/`serde_json`, `Box<dyn Error>`）に変更
+- PROGRESS.md の更新が漏れていたため、次回セッション冒頭でレビューを実施する
+
 ### 2026-06-11
 - 自動テスト（`#[test]`・`cargo test`）の講義・実装
 - `Book` に5つのテストを実装（`test_book_new`・`display`・`category` 3パターン）
@@ -101,6 +106,14 @@
 ---
 
 ## 次回セッションの開始点
+
+**総合ミニプロジェクト Phase 3・4 のレビュー → Phase 5（テスト）へ**
+
+- 前回（2026-06-25）に Phase 3（save/load, serde_json化）と Phase 4（CLIコマンド解析）を実装済みだが、講師によるレビュー（解説ステップ）が未実施。
+- まずは `task_manager.rs` と `main.rs` の実務観点レビューから再開する。
+- レビュー後、Phase 5（`#[test]` によるユニットテスト）の講義・設問へ進む。
+
+---
 
 **Step 6: スマートポインタ・非同期・マクロ・最適化**（完了）
 
@@ -128,9 +141,9 @@
 |----------|------|------|
 | Phase 1 | データ構造設計（`Task` struct / `Status` enum） | ✅ 完了 |
 | Phase 2 | タスク管理ロジック（`TaskManager` / `add` / `list`） | ✅ 完了 |
-| Phase 3 | ファイル保存・読み込み（`save` / `load` / `Result`） | 🔄 進行中 |
-| Phase 4 | CLIコマンド解析（`std::env::args` / `match`） | ⬜ 未着手 |
-| Phase 5 | テスト（`#[test]`） | ⬜ 未着手 |
+| Phase 3 | ファイル保存・読み込み（`save` / `load` / `Result`） | ✅ 実装済み（未レビュー） |
+| Phase 4 | CLIコマンド解析（`std::env::args` / `match`） | ✅ 実装済み（未レビュー） |
+| Phase 5 | テスト（`#[test]`） | ⬜ 次回ここから |
 
 ### Phase 1 習得事項
 - `u32` を ID に使う意味（符号なし整数で意味を型で表現）
@@ -144,7 +157,10 @@
 
 ---
 
-### Phase 3 設問（未提出）
+### Phase 3 設問（提出済み・レビュー未実施）
+
+※実際の実装は仕様（CSV風テキスト）から逸脱し、`serde` / `serde_json` を使ったJSON保存に変更されている（`data.json`）。
+エラー型も `Result<(), String>` ではなく `Result<(), Box<dyn Error>>` を採用。これは次回セッション冒頭でレビューする。
 
 `task_manager.rs` に以下の2メソッドを追加する。
 
@@ -171,7 +187,7 @@
 
 ---
 
-### Phase 4 設問（未着手）
+### Phase 4 設問（提出済み・レビュー未実施）
 
 `main.rs` を書き換えて、コマンドライン引数でタスク管理ツールを操作できるようにする。
 
@@ -219,7 +235,7 @@ cargo run -- delete 1           # ID=1 を削除する
 
 ---
 
-### Step 6 設問（未提出）：料理シミュレーター（async/await）
+### Step 6 設問（提出済み・実装確認済み）：料理シミュレーター（async/await）
 
 `src/async_task.rs` を新規作成し、以下を実装する：
 
