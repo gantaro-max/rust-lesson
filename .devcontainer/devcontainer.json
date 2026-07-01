@@ -9,7 +9,11 @@
     "LANG": "C.UTF-8"
   },
   "remoteEnv": {
-    "LANG": "C.UTF-8"
+    "LANG": "C.UTF-8",
+    "HTTP_PROXY": "",
+    "HTTPS_PROXY": "",
+    "ALL_PROXY": "",
+    "NO_PROXY": "localhost,127.0.0.1,::1,chatgpt.com,.chatgpt.com,auth.openai.com,.openai.com"
   },
   "remoteUser": "vscode",
   "updateRemoteUserUID": true,
@@ -21,6 +25,8 @@
         "anthropic.claude-code",
         "openai.chatgpt",
         "ms-azuretools.vscode-docker",
+        "esbenp.prettier-vscode",
+        "dbaeumer.vscode-eslint",
         "vadimcn.vscode-lldb"
       ],
       "settings": {
