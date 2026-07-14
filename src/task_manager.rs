@@ -29,38 +29,37 @@ impl TaskManager {
         }
     }
 
-    pub fn complete(&mut self,id:u32){
+    pub fn complete(&mut self, id: u32) {
         if self.tasks.is_empty() {
             println!("タスクは0です");
             return;
         }
-        
-        if let Some(target) = self.tasks.iter_mut().find(|task|task.id()==id){
+
+        if let Some(target) = self.tasks.iter_mut().find(|task| task.id() == id) {
             target.done();
-            println!("id: {} {} タスクを完了しました",target.id(),target.title());
-        }
-        else{
+            println!(
+                "id: {} {} タスクを完了しました",
+                target.id(),
+                target.title()
+            );
+        } else {
             println!("該当タスクはありません");
         }
     }
 
-    pub fn delete(&mut self,id:u32){
+    pub fn delete(&mut self, id: u32) {
         if self.tasks.is_empty() {
             println!("タスクは0です");
             return;
         }
-        if let Some(target) = self.tasks.iter_mut().find(|task|task.id()==id){
-            let target_id= target.id();
-            let target_title= target.title().to_string();
-            let new_tasks = self.tasks.iter().filter(|task| task.id()!=target_id).cloned().collect();
-            self.tasks=new_tasks;
-            println!("id: {} {} タスクを削除しました",target_id,target_title);
-            
-        }
-        else{
+        if let Some(target) = self.tasks.iter_mut().find(|task| task.id() == id) {
+            let target_id = target.id();
+            let target_title = target.title().to_string();
+            self.tasks.retain(|task| task.id() != id);
+            println!("id: {} {} タスクを削除しました", target_id, target_title);
+        } else {
             println!("該当タスクはありません");
         }
-
     }
 
     pub fn save(&self, path: &str) -> Result<(), Box<dyn Error>> {
@@ -69,14 +68,14 @@ impl TaskManager {
         Ok(())
     }
 
-    pub fn load(&mut self,path:&str)->Result<(),Box<dyn Error>>{
-        if !std::path::Path::new(path).exists(){            
+    pub fn load(&mut self, path: &str) -> Result<(), Box<dyn Error>> {
+        if !std::path::Path::new(path).exists() {
             return Ok(());
-        }       
+        }
         let json = fs::read_to_string(path)?;
-        let tasks:Vec<Task> = serde_json::from_str(&json)?;
-        if let Some(last_task) = tasks.last(){
-            self.next_id=last_task.id()+1;
+        let tasks: Vec<Task> = serde_json::from_str(&json)?;
+        if let Some(last_task) = tasks.last() {
+            self.next_id = last_task.id() + 1;
         };
         self.tasks = tasks;
         Ok(())

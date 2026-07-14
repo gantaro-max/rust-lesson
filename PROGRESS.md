@@ -107,11 +107,29 @@
 
 ## 次回セッションの開始点
 
-**総合ミニプロジェクト Phase 3・4 のレビュー → Phase 5（テスト）へ**
+**Phase 5（`#[test]` によるユニットテスト）から開始**
 
-- 前回（2026-06-25）に Phase 3（save/load, serde_json化）と Phase 4（CLIコマンド解析）を実装済みだが、講師によるレビュー（解説ステップ）が未実施。
-- まずは `task_manager.rs` と `main.rs` の実務観点レビューから再開する。
-- レビュー後、Phase 5（`#[test]` によるユニットテスト）の講義・設問へ進む。
+- Phase 3・4 のレビューは 2026-07-14 に完了済み。次回はPhase 5の講義・設問からスタートする。
+
+### 2026-07-14 セッションメモ
+
+- Phase 3・4 のレビュー実施（`task_manager.rs` / `main.rs`）
+  - `args[2]` の直接インデックスアクセス（パニックの危険）→ `args.get(2)` へ自主修正済みだったのを確認・レビュー
+  - `delete` の `.filter().cloned().collect()`（無駄なクローン）→ `.retain()` へ自主修正済みだったのを確認・レビュー
+  - `Index`（`[]`）と`.get()`の設計思想の違い（「プログラムの前提崩壊=バグはpanic」「外部由来の正常な失敗はOption/Result」）を対話で理解
+- `main.rs` のネスト解消リファクタリングを実施
+  - `Option::and_then`で試行 → `.ok()`でエラー情報を握り潰す失敗を経験（`Result::ok()`の挙動を実機で確認）
+  - `Option::ok_or_else` → `Result::and_then` → `map_err` のチェーンに書き換え、`Result<u32, String>`に統一する設計に到達
+  - 一度`println!`をコンビネータの中に埋め込んでしまい、エラーメッセージが二重表示されるバグを実際に`cargo run`で確認 → 「コンビネータは副作用ではなくデータを返す場所」という原則を学習
+  - `"done"`/`"delete"`の重複ロジックを`parse_task_id(args: &[String]) -> Result<u32, String>`として関数抽出（DRY）
+  - 引数を`Vec<String>`（所有権ごと）ではなく`&[String]`（借用）にすべきと指摘 → 自力で`&[String]`に修正（`&Vec<T>`より`&[T]`が柔軟という理由も踏まえて選択）
+  - `"add"`には同じリファクタリングが不要な理由（失敗ポイントが1つしかない）を自力で説明できた
+- 副次的に `use std::f32::consts::E;` という誤爆import（IDE自動補完由来と推測）にも気づき、警告ゼロの状態を維持する習慣を確認
+
+### Phase 3・4 総括（実装内容）
+
+- `task_manager.rs`：`save`/`load`をJSON（`serde_json`）で実装、`complete`/`delete`メソッド追加
+- `main.rs`：`std::env::args()` + `match`によるサブコマンド解析（`add`/`list`/`done`/`delete`）、`parse_task_id`ヘルパー関数によるDRY化
 
 ---
 
