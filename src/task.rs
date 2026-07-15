@@ -1,13 +1,13 @@
 use serde::{self, Deserialize, Serialize};
 
-#[derive(Debug, Serialize, Deserialize,Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub enum Status {
     #[serde(rename = "todo")]
     ToDo,
     #[serde(rename = "done")]
     Done,
 }
-#[derive(Debug, Serialize, Deserialize,Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub struct Task {
     id: u32,
     title: String,
@@ -18,7 +18,7 @@ impl Task {
     pub fn new(id: u32, title: &str) -> Self {
         Self {
             id,
-            title:title.to_string(),
+            title: title.to_string(),
             status: Status::ToDo,
         }
     }
@@ -37,8 +37,12 @@ impl Task {
     pub fn title(&self) -> &str {
         &self.title
     }
-        
-    pub fn done(&mut self){
-        self.status=Status::Done;
+    #[allow(dead_code)]
+    pub fn status(&self) -> &Status {
+        &self.status
+    }
+
+    pub fn done(&mut self) {
+        self.status = Status::Done;
     }
 }

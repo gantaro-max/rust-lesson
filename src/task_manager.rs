@@ -81,3 +81,63 @@ impl TaskManager {
         Ok(())
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::task::Status;
+
+    #[test]
+    fn tasks_added() {
+        let mut test_task_manager = TaskManager::new();
+        let title = "てすと";
+        test_task_manager.add(title);
+
+        let test_task = test_task_manager.tasks.first().unwrap();
+
+        assert_eq!(test_task.id(), 1);
+        assert_eq!(test_task.title(), "てすと");
+    }
+
+    #[test]
+    fn task_complete_done() {
+        let mut test_task_manager = TaskManager::new();
+        let test_task = Task::new(1, "てすと");
+        test_task_manager.tasks.push(test_task);
+        test_task_manager.complete(1);
+
+        let result = test_task_manager.tasks.first().unwrap();
+
+        assert_eq!(*result.status(), Status::Done);
+    }
+
+    #[test]
+    fn task_delete() {
+        let mut test_task_manager = TaskManager::new();
+        let test_task = Task::new(1, "てすと");
+        test_task_manager.tasks.push(test_task);
+        test_task_manager.delete(1);
+
+        assert!(test_task_manager.tasks.is_empty());
+    }
+
+    #[test]
+    fn test_save_load() {
+        let mut save_task_manager = TaskManager::new();
+        let mut load_task_manager = TaskManager::new();
+
+        let test_task = Task::new(1, "てすと");
+        save_task_manager.tasks.push(test_task);
+
+        let path = "./test_save_load.json";
+
+        save_task_manager.save(path).unwrap();
+        load_task_manager.load(path).unwrap();
+
+        let result = load_task_manager.tasks.first().unwrap();
+
+        assert_eq!(result, save_task_manager.tasks.first().unwrap());
+
+        std::fs::remove_file(path).unwrap();
+    }
+}
